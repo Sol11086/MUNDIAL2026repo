@@ -1,0 +1,17 @@
+#quiz-container {
+  max-width: 600px;
+  margin: auto;
+  animation: fadeInUp 0.8s ease;
+}
+
+.option-btn:hover {
+  transform: scale(1.05);
+  transition: 0.2s;
+  color:black;
+}
+
+#country-title {
+  font-size: 2rem;
+  color: #ffffff;
+  font-weight: bold;
+}

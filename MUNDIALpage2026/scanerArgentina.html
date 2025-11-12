@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mundial2026</title>
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image.prod.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.umd.js"></script> -->
+
+    <!-- Librerías necesarias -->
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
+    <!-- MindAR Core -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image.prod.js"></script>
+    <!-- MindAR + AFrame integration -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        a-scene {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Contenedor en top con espacio entre botones */
+        #buttonContainer {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            z-index: 9999;
+            pointer-events: auto;
+        }
+
+        /* Estilo común para botones */
+        #buttonContainer button {
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-size: 15px;
+            white-space: nowrap;
+        }
+
+        /* Opcional: que el botón del medio crezca si necesita más espacio */
+        #indications {
+            flex: 1 1 auto;
+            /* permite que ocupe el espacio disponible */
+            text-align: center;
+            margin: 0 12px;
+        }
+
+        /* mantener iconos en los extremos con tamaño fijo */
+        #closeBtn,
+        #rotateBtn {
+            flex: 0 0 auto;
+            max-width: 120px;
+        }
+
+        @media (max-width: 420px) {
+            #indications {
+                font-size: 13px;
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="buttonContainer">
+        <button id="closeBtn" onclick="window.history.back()">✕ Cerrar</button>
+        <button id="indications">Escanea el logo del equipo argentino</button>
+        <button id="rotateBtn">🔄 Rotar modelo</button>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Activar cámara
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices
+                    .getUserMedia({ video: true })
+                    .then(() => console.log("✅ Cámara lista"))
+                    .catch((err) => console.warn("❌ Permiso de cámara denegado:", err));
+            }
+
+            // Manejo de rotación
+            const rotateButton = document.getElementById("rotateBtn");
+            rotateButton.addEventListener("click", () => {
+                const model = document.querySelector("#modelEntity");
+                if (!model) return;
+
+                // Si ya está rotando, detener animación
+                if (model.hasAttribute("animation__rotate")) {
+                    model.removeAttribute("animation__rotate");
+                    rotateButton.textContent = "🔄 Rotar modelo";
+                } else {
+                    // Agregar animación de rotación
+                    model.setAttribute("animation__rotate", {
+                        property: "rotation",
+                        to: "0 360 0",
+                        loop: true,
+                        dur: 4000,
+                        easing: "linear"
+                    });
+                    rotateButton.textContent = "⏹ Detener rotación";
+                }
+            });
+        });
+    </script>
+    <a-scene mindar-image="imageTargetSrc: ./targets(6).mind" vr-mode-ui="enabled: false"
+        device-orientation-permission-ui="enabled: false">
+        <a-assets>
+            <a-asset-item id="model" src="./mesii.gltf"></a-asset-item>
+        </a-assets>
+
+        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+        <a-entity mindar-image-target="targetIndex: 0">
+            <a-entity gltf-model="#model" position="0 -2 0" rotation="0 90 0" scale="0.02 0.02 0.02" animation-mixer>
+            </a-entity>
+        </a-entity>
+    </a-scene>
+</body>
+
+</html>
